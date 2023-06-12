@@ -10,30 +10,39 @@
 // - Here is an example of what the application might look like
 
 console.log("Let's get this party started!");
-const searchField = document.querySelector('#query'); // get search field
-const searchButton = document.querySelector('#giphyBtn') 
+const input = document.querySelector('#query'); // get search field
+const form = document.querySelector('#searchForm') 
 const apiKey = '2ziqEsGzUIztaWWIgKEQ1gw6M0uandZk' //is it OK to expose this in the request?
 let results = document.querySelector('#results')
 const removeButton = document.querySelector('#removeBtn')
 
 //TODO: button click handlers
-searchButton.addEventListener('click',searchGiphy);
-removeButton.addEventListener('click',clear);
+form.addEventListener('submit',function(e){
+    e.preventDefault();
+    searchGiphy(input)});
+
+    removeButton.addEventListener('click',clear);
 //DONE
 
 
 //TODO: search giphy for a gif
 async function searchGiphy(query) {
     let offset = Math.floor(Math.random()*100)//randomize the result
-    const q = searchField.value; // set query to q, for use in api request
-    const res = await axios.get(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${q}&limit=1&offset=${offset}`)
-    // console.log(res); //remove later
+    const q = input; // set query to q, for use in api request
+    try {
+        const res = await axios.get(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${q}&limit=1&offset=${offset}`)
+        let gifURL = res.data.data[0].images.downsized_medium.url
+        appendGif(gifURL); // call append function with gif url
+    } catch (e) {
+        alert('Could not search for a gif. Please make sure ad blockers are disabled.')
+
+    } 
+
 
     //return the actual gif URL
-    let gifURL = res.data.data[0].images.downsized_medium.url
 
     // console.log('gifURL is ',gifURL)
-    appendGif(gifURL); // call append function with gif url
+    
 }
 
 //add gif to the dom
